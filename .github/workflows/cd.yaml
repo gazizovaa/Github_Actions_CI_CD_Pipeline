@@ -34,7 +34,7 @@ jobs:
       - name: Checking metrics 
         run: python src/evaluate_model.py --ci-check
 
-      - name: Preparing release directory and save it as artifact
+      - name: Preparing release directory
         run: |
           mkdir -p release
           cp models/model.pkl release/
@@ -42,6 +42,8 @@ jobs:
           echo "Branch: ${{ github.ref }}" >> release/deploy_log.txt
           echo "Commit: ${{ github.sha }}" >> release/deploy_log.txt
           cat release/deploy_log.txt
+
+      - name: Saving release as artifact
         uses: actions/upload-artifact@v4
         with:
           name: trained-model-release
