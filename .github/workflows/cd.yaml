@@ -29,7 +29,7 @@ jobs:
         run: python src/prepare_data.py --split-check
 
       - name: Testing ML model built
-        run: python src/train_model.py --dry-run
+        run: python src/train_model.py
 
       - name: Checking metrics 
         run: python src/evaluate_model.py --ci-check
