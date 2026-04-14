@@ -76,6 +76,7 @@ def split_data(df):
     X_train, X_test, y_log_train, y_log_test = train_test_split(X, y_log, test_size=0.2, random_state=42)
     print(f"Shape of training set: {X_train.shape}\nShape of log train set: {y_log_train.shape}")
     print(f"Shape of test set: {X_test.shape}\nShape of log test set: {y_log_test.shape}")
+    return X_train, X_test, y_log_train, y_log_test
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
