@@ -9,7 +9,7 @@ on:
 jobs:
   ci: 
     name: Data Validation and Model Test
-    if: github..event_name == 'pull_request'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
@@ -66,19 +66,19 @@ jobs:
       - name: Setup Python packages
         run: pip install -r requirements.txt
 
-      - name: Downloading Dataset and Overview
+      - name: Download Dataset and Overview
         run: python src/prepare_data.py --validate-only
 
-      - name: Splitting data into Train/Test sets
+      - name: Split data into Train/Test sets
         run: python src/prepare_data.py --split-check
 
-      - name: Testing ML model built
+      - name: Test ML model built
         run: python src/train_model.py
 
-      - name: Checking metrics 
+      - name: Check model metrics 
         run: python src/evaluate_model.py --ci-check
 
-      - name: Preparing release directory
+      - name: Prepare release directory
         run: |
           mkdir -p release
           cp models/model.pkl release/
@@ -89,7 +89,7 @@ jobs:
           cat reports/ci_report.txt >> release/deploy_log.txt
           cat release/deploy_log.txt
 
-      - name: Saving release as artifact
+      - name: Save release as artifact
         uses: actions/upload-artifact@v4
         with:
           name: trained-model-release

@@ -21,5 +21,5 @@ if __name__ == "__main__":
     lr = train_model.train_model(lr, X_train, y_train)
     save_model(lr, "linear_regression.pkl")
 
-    fine_tuned_rf = train_model.tune_model(X_train, y_train)
+    fine_tuned_rf = train_model.fine_tune_model(X_train, y_train)
     save_model(fine_tuned_rf, "random_forest_fine_tuned.pkl")
