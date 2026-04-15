@@ -1,0 +1,104 @@
+name: CI/CD Pipeline - Medical Insurance Costs ML
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  ci: 
+    name: Data Validation and Model Test
+    if: github..event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+    # Get GitHub codes 
+      - name: Checkout GitHub Repo
+        uses: actions/checkout@v3
+
+    # Setup environment 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.9'
+
+    # Setup packages
+      - name: Setup Python packages
+        run: pip install -r requirements.txt
+
+      - name: Download Dataset and Overview
+        run: python src/prepare_data.py --validate-only
+
+      - name: Split data into Train/Test sets
+        run: python src/prepare_data.py --split-check
+
+      - name: Test ML model built
+        run: python src/train_model.py --dry-run
+
+      - name: Check model metrics 
+        run: python src/evaluate_model.py --ci-check
+
+      # Save test report as an artifact
+      - name: Upload test report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-test-report
+          path: reports/ci_report.txt
+  
+  cd: 
+    name: Build and Deploy Model 
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Get GitHub codes 
+      - name: Checkout GitHub Repo
+        uses: actions/checkout@v3
+
+    # Setup environment 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.9'
+    
+    # Setup packages
+      - name: Setup Python packages
+        run: pip install -r requirements.txt
+
+      - name: Downloading Dataset and Overview
+        run: python src/prepare_data.py --validate-only
+
+      - name: Splitting data into Train/Test sets
+        run: python src/prepare_data.py --split-check
+
+      - name: Testing ML model built
+        run: python src/train_model.py
+
+      - name: Checking metrics 
+        run: python src/evaluate_model.py --ci-check
+
+      - name: Preparing release directory
+        run: |
+          mkdir -p release
+          cp models/model.pkl release/
+          echo "Deploy data: $(date)" >> release/deploy_log.txt
+          echo "Branch: ${{ github.ref }}" >> release/deploy_log.txt
+          echo "Commit: ${{ github.sha }}" >> release/deploy_log.txt
+          echo "---Model Metrics---" >> release/deploy_log.txt
+          cat reports/ci_report.txt >> release/deploy_log.txt
+          cat release/deploy_log.txt
+
+      - name: Saving release as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model-release
+          path: release/
+  
+
+
+        
+    
+    
+
+      
