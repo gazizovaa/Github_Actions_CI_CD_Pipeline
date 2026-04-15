@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ["main"]
 
+# Set PYTHONPATH to include src files for all steps 
+env:
+  PYTHONPATH: ${{ github.workspace }}/src
+
 jobs:
   ci: 
     name: Data Validation and Model Test
