@@ -9,7 +9,7 @@ on:
 jobs:
   ci: 
     name: Data Validation and Model Test
-    if: github..event_name == 'pull_request'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
