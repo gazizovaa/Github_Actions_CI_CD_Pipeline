@@ -12,10 +12,10 @@ import train_model
 
 def evaluate(pipeline, X_test, y_test, label="Model"):
     y_pred = pipeline.predict(X_test)
-    mae  = mean_absolute_error(y_test, y_pred)
-    mse  = mean_squared_error(y_test, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
     rmse = np.sqrt(mse)
-    r2   = r2_score(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
 
     print(f"\n── {label} ──")
     print(f"MAE: {mae:.2f}")
