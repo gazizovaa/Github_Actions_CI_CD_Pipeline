@@ -10,7 +10,7 @@ st.set_page_config(page_title='Medical Insurance Costs Prediction', layout='cent
 # Load the model
 @st.cache_resource
 def load_predicted_model():
-    model_path = "models/random_forest_fine_tuned.pkl"
+    model_path = "models/model.pkl"
     if os.path.exists(model_path):
         return joblib.load(model_path)
     else:
@@ -27,12 +27,12 @@ col1, col2 = st.columns(2)
 
 with col1:
     age = st.number_input(label="Age", min_value=1, max_value=100, value=25)
-    sex = st.selectbox("Sex", ["Male", "Female"])
+    sex = st.selectbox("Sex", ["male", "female"])
     bmi = st.number_input(label="BMI", min_value=10.0, max_value=60.0, value=25.0)
     
 with col2:
     children = st.number_input(label="The number of children", min_value=0, max_value=10, value=0)
-    smoker = st.selectbox("Are you smoking?", ["No", "Yes"])
+    smoker = st.selectbox("Are you smoking?", ["no", "yes"])
     region = st.selectbox("Region", ["southwest", "southeast", "northwest", "northeast"])
     
 # Put the button for prediction
