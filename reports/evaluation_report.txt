@@ -1,0 +1,5 @@
+=== Model Evaluation Report ===
+
+Linear Regression: R²=0.8295, MAE=0.2607, RMSE=0.3978
+Random Forest: R²=0.8473, MAE=0.1927, RMSE=0.3764
+Fine-tuned RF: R²=0.8627, MAE=0.1880, RMSE=0.3569

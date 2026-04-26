@@ -43,6 +43,9 @@ jobs:
       - name: Check model metrics 
         run: python src/evaluate_model.py --ci-check
 
+      - name: Validate Streamlit Application
+        run: python -c "import ast; ast.parse(open('app.py').read()); print("Syntax is okay!")"
+
       # Save test report as an artifact
       - name: Upload test report as artifact
         uses: actions/upload-artifact@v4
@@ -82,13 +85,22 @@ jobs:
       - name: Check model metrics 
         run: python src/evaluate_model.py --ci-check
 
+      - name: Validate Streamlit Application
+        run: python -c "import ast; ast.parse(open('app.py').read()); print("Syntax is okay!")"
+
+      - name: Verify Streamlit
+        run: python -c "import streamlit as st; print(st.__version__)"
+
       - name: Prepare release directory
         run: |
           mkdir -p release
           cp models/model.pkl release/
+          cp app.py release/
+          cp requirements.txt release/
           echo "Deploy data: $(date)" >> release/deploy_log.txt
           echo "Branch: ${{ github.ref }}" >> release/deploy_log.txt
           echo "Commit: ${{ github.sha }}" >> release/deploy_log.txt
+          echo "Streamlit Application: app.py" >> release/deploy_log.txt 
           echo "---Model Metrics---" >> release/deploy_log.txt
           cat reports/ci_report.txt >> release/deploy_log.txt
           cat release/deploy_log.txt
