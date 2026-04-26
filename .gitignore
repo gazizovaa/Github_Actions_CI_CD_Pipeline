@@ -1,0 +1,10 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Model files
+models/*.pkl
+
+# Reports
+reports/*.txt
