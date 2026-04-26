@@ -44,7 +44,7 @@ jobs:
         run: python src/evaluate_model.py --ci-check
 
       - name: Validate Streamlit Application
-        run: python -c "import ast; ast.parse(open('app.py').read()); print("Syntax is okay!")"
+        run: python -c "import ast; ast.parse(open('app.py').read()); print('Syntax is okay!')"
 
       # Save test report as an artifact
       - name: Upload test report as artifact
