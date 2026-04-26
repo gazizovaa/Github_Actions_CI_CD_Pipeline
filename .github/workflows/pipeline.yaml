@@ -86,7 +86,7 @@ jobs:
         run: python src/evaluate_model.py --ci-check
 
       - name: Validate Streamlit Application
-        run: python -c "import ast; ast.parse(open('app.py').read()); print("Syntax is okay!")"
+        run: python -c "import ast; ast.parse(open('app.py').read()); print('Syntax is okay!')"
 
       - name: Verify Streamlit
         run: python -c "import streamlit as st; print(st.__version__)"
