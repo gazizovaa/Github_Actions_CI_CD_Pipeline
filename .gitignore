@@ -8,3 +8,8 @@ models/*.pkl
 
 # Reports
 reports/*.txt
+
+# Test cache
+.pytest_cache/
+.coverage
+
