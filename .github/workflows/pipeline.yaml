@@ -40,6 +40,9 @@ jobs:
       - name: Test ML model built
         run: python src/train_model.py --dry-run
 
+      - name: Run Unit Tests
+        run: python -m pytest tests/ -v
+
       - name: Check model metrics 
         run: python src/evaluate_model.py --ci-check
 

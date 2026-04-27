@@ -360,38 +360,42 @@ elif page == "Evaluation":
 # Prediction
 elif page == "Prediction":
     st.title("Insurance Cost Prediction")
- 
+
     @st.cache_resource
-    def load_model():
+    def load_or_train_model():
         path = f"{models_dir}/model.pkl"
         if os.path.exists(path):
             return joblib.load(path)
-        return None
-    model = load_model()
- 
-    if model is None:
-        st.warning("No saved model found. Please go to **Save Models** first.")
-    else:
-        st.success("Model loaded from `models/model.pkl`")
-        col1, col2 = st.columns(2)
-        with col1:
-            age = st.number_input("Age", 1, 100, 30)
-            sex = st.selectbox("Sex", ["male", "female"])
-            bmi = st.number_input("BMI", 10.0, 60.0, 25.0)
-        with col2:
-            children = st.number_input("Number of Children", 0, 10, 0)
-            smoker   = st.selectbox("Smoker?", ["no", "yes"])
-            region   = st.selectbox("Region", ["southwest", "southeast", "northwest", "northeast"])
- 
-        if st.button("Predict Insurance Cost"):
-            input_df = pd.DataFrame({"age": [age], "sex": [sex], "bmi": [bmi],
-                                     "children": [children], "smoker": [smoker], "region": [region]})
-            log_pred = model.predict(input_df)
-            cost     = np.expm1(log_pred)[0]
-            st.markdown(f"""
-            <div style="background:#0f1923;border-radius:12px;padding:2rem;text-align:center;margin-top:1rem;">
-                <p style="color:#aaa;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;margin:0">Estimated Annual Cost</p>
-                <p style="color:#f0c96b;font-size:3rem;font-weight:700;margin:0.5rem 0">${cost:,.2f}</p>
-            </div>
-            """, unsafe_allow_html=True)
- 
+        
+        df = load_data()
+        X_train, X_test, y_train, y_test = split_data(df)
+        pipeline = build_pipeline(X_train, RandomForestRegressor(random_state=42))
+        pipeline.fit(X_train, y_train)
+        os.makedirs(models_dir, exist_ok=True)
+        joblib.dump(pipeline, path)
+        return pipeline
+
+    model = load_or_train_model()
+    st.success("Model is ready!")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        age = st.number_input("Age", 1, 100, 30)
+        sex = st.selectbox("Sex", ["male", "female"])
+        bmi = st.number_input("BMI", 10.0, 60.0, 25.0)
+    with col2:
+        children = st.number_input("Number of Children", 0, 10, 0)
+        smoker = st.selectbox("Smoker?", ["no", "yes"])
+        region = st.selectbox("Region", ["southwest", "southeast", "northwest", "northeast"])
+
+    if st.button("Predict Insurance Cost"):
+        input_df = pd.DataFrame({"age": [age], "sex": [sex], "bmi": [bmi],
+                                 "children": [children], "smoker": [smoker], "region": [region]})
+        log_pred = model.predict(input_df)
+        cost = np.expm1(log_pred)[0]
+        st.markdown(f"""
+        <div style="background:#0f1923;border-radius:12px;padding:2rem;text-align:center;margin-top:1rem;">
+            <p style="color:#aaa;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;margin:0">Estimated Annual Cost</p>
+            <p style="color:#f0c96b;font-size:3rem;font-weight:700;margin:0.5rem 0">${cost:,.2f}</p>
+        </div>
+        """, unsafe_allow_html=True)
